@@ -53,6 +53,7 @@
     "mdx-constant": "^0.1.0",
     "mdx-table-of-contents": "^0.1.0",
     "mini-css-extract-plugin": "^0.6.0",
+    "ora": "^3.4.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "reading-time": "^1.2.0",
