@@ -55,7 +55,13 @@ const presets = ['@babel/preset-env', '@babel/preset-react', 'linaria/babel']
               },
               {
                 loader: 'linaria/loader',
-                options: { sourceMap: true }
+                options: {
+                  sourceMap: true,
+                  displayName: true,
+                  babelOptions: {
+                    presets: ['@babel/preset-env', '@babel/preset-react']
+                  }
+                }
               }
             ]
           },
@@ -81,6 +87,28 @@ const presets = ['@babel/preset-env', '@babel/preset-react', 'linaria/babel']
                 }
               },
               './loaders/mdx/index.js'
+            ]
+          },
+          {
+            test: /\.(png|jpe?g|gif)$/i,
+            use: [
+              {
+                loader: 'url-loader',
+                options: {
+                  limit: 8192
+                }
+              }
+            ]
+          },
+          {
+            test: /\.(ttf|eot|woff|woff2)$/,
+            use: [
+              {
+                loader: 'file-loader',
+                options: {
+                  name: 'fonts/[name].[ext]'
+                }
+              }
             ]
           },
           {
