@@ -4,11 +4,12 @@ const webpack = require('webpack')
 const { readFile } = require('fs').promises
 const path = require('path')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const schema = require('./schema')
 const StaticReactSiteGeneratorPlugin = require('./plugin')
 
-const presets = ['@babel/preset-env', '@babel/preset-react']
+const presets = ['@babel/preset-env', '@babel/preset-react', 'linaria/babel']
 
 ;(async function () {
   let config
@@ -51,6 +52,22 @@ const presets = ['@babel/preset-env', '@babel/preset-react']
                 options: {
                   presets
                 }
+              },
+              {
+                loader: 'linaria/loader',
+                options: { sourceMap: true }
+              }
+            ]
+          },
+          {
+            test: /\.css$/,
+            use: [
+              MiniCssExtractPlugin.loader,
+              {
+                loader: 'css-loader',
+                options: {
+                  sourceMap: true
+                }
               }
             ]
           },
@@ -85,7 +102,11 @@ const presets = ['@babel/preset-env', '@babel/preset-react']
           }
         ]
       },
-      plugins: [new CleanWebpackPlugin(), new StaticReactSiteGeneratorPlugin()]
+      plugins: [
+        new CleanWebpackPlugin(),
+        new MiniCssExtractPlugin({ filename: '[hash].[name].css' }),
+        new StaticReactSiteGeneratorPlugin({ title: config.title })
+      ]
     },
     (err, stats) => {
       if (err | stats.hasErrors()) {

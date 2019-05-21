@@ -1,27 +1,47 @@
 const moduleEval = require('eval')
 
 class StaticReactSiteGeneratorPlugin {
+  constructor ({ title }) {
+    this.title = title
+  }
+
   apply (compiler) {
     compiler.hooks.emit.tapAsync(
       'StaticReactSiteGeneratorPlugin',
       (compilation, callback) => {
+        const webpackStatsJson = compilation.getStats().toJson()
         try {
-          const asset = this.findAsset(
+          const staticEntry = this.findAsset(
             undefined,
             compilation,
-            compilation.getStats().toJson()
+            webpackStatsJson
           )
-          const source = compilation.assets[asset].source()
-          const render = moduleEval(source)
-          const output = render(
-            Object.keys(compilation.assets).filter(
-              filename => !/\.static.js$/.test(filename)
-            )
+          const staticRendererSource = compilation.assets[staticEntry].source()
+          const render = moduleEval(staticRendererSource)
+          const cssAssetName = Object.keys(compilation.assets).find(n =>
+            /\.main.css/.test(n)
           )
 
+          const { html, css } = render(
+            Object.keys(compilation.assets).filter(
+              filename => !filename.includes('static')
+            ),
+            cssAssetName ? compilation.assets[cssAssetName].source() : '',
+            this.title
+          )
+
+          Object.keys(compilation.assets)
+            .filter(f => f.includes('static'))
+            .forEach(s => delete compilation.assets[s])
+
           compilation.assets['index.html'] = {
-            source: () => output,
-            size: () => output.length
+            source: () => html,
+            size: () => html.length
+          }
+
+          compilation.assets[cssAssetName] = {
+            source: () => css,
+            size: () => css.length
           }
         } catch (e) {
           throw e
