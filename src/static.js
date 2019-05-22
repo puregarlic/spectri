@@ -1,4 +1,5 @@
 const React = require('react')
+const { Helmet } = require('react-helmet')
 const { collect } = require('linaria/server')
 const ReactDOMServer = require('react-dom/server')
 
@@ -9,6 +10,7 @@ module.exports = (assets, stylesheet, title = 'Spectri') => {
   const css = assets.filter(filename => filename.match(/\.css$/))
 
   const app = ReactDOMServer.renderToString(React.createElement(Root))
+  const helmet = Helmet.renderStatic()
   const { critical, other } = collect(app, stylesheet)
 
   const buildScripts = files => {
@@ -23,12 +25,14 @@ module.exports = (assets, stylesheet, title = 'Spectri') => {
 
   const html = `
 <!DOCTYPE html>
-<html>
+<html ${helmet.htmlAttributes.toString()}>
   <head>
-    <title>${title}</title>
+    ${helmet.title.toString()}
+    ${helmet.meta.toString()}
+    ${helmet.link.toString()}
     <style type="text/css">${critical}</style>
   </head>
-  <body>
+  <body ${helmet.bodyAttributes.toString()}>
     <div id="app">${app}</div>
     ${css ? buildLinks(css) : ''}
     ${js ? buildScripts(js) : ''}
