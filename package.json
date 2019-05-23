@@ -57,6 +57,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.1",
+    "react-medium-image-zoom": "^3.0.16",
     "reading-time": "^1.2.0",
     "remark-emoji": "^2.0.2",
     "remark-images": "^0.18.0",
