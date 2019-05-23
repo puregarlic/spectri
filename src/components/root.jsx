@@ -6,6 +6,7 @@ import { MDXProvider } from '@mdx-js/react'
 import Document, { tableOfContents } from '../documents.index'
 
 import Footer from './footer'
+import Image from './image'
 
 const Global = styled.div`
   :global() {
@@ -31,21 +32,25 @@ const Global = styled.div`
 const DocumentContainer = styled.div`
   @media screen {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 64px;
-    padding-bottom: 64px;
+    display: grid;
+    grid-template-columns: auto minmax(auto, 32em) auto;
+    grid-template-rows: 8em auto 8em;
+    grid-template-areas:
+      'actions actions actions'
+      'nav content .'
+      'footer footer footer';
   }
 `
 
 const ContentContainer = styled.div`
   @media screen {
-    width: 100%;
-    max-width: 32em;
-    padding-bottom: 64px;
+    grid-area: content;
   }
 `
+
+const components = {
+  img: Image
+}
 
 export const Root = () => {
   return (
@@ -57,7 +62,7 @@ export const Root = () => {
       </Helmet>
       <Global />
       <ContentContainer>
-        <MDXProvider>
+        <MDXProvider components={components}>
           <Document />
         </MDXProvider>
       </ContentContainer>
